@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="checkbox"
+        android:id="@+id/checkbox"
+        android:summary="Check it to enable Dynamic Wallpaper"
+        android:title="Dynamic Wallpaper" />
+    <ListPreference
+        android:entries="@array/list"
+        android:defaultValue="1"
+        android:entryValues="@array/lValues"
+        android:key="list"
+        android:id="@+id/list"
+        android:summary="Choose a theme"
+        android:title="Theme" />
+    <Preference android:title="About"
+        android:key="info"
+        android:summary="Info about the developer"/>
+</PreferenceScreen>

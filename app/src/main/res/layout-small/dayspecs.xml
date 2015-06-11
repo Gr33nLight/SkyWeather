@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mm="http://millennialmedia.com/android/schema"
+    android:id="@+id/container"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ff242424"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/summary"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="Wind (kmh)"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="Humidity %"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="Precipitation %"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="Pressure"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/windText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="..."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/humidityText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="..."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/precipText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="..."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/pressureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="..."
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fffbfbfd"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/ic_arrow_left" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temps and Precipitations"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#fffbfbfd"
+        android:textSize="15sp"
+        android:layout_above="@+id/chart"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView9"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:text="This is a long summary just to test"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#fffbfbfd"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/back"
+        android:layout_centerHorizontal="true"
+        android:text="Today"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#fffbfbfd" />
+
+    <lecho.lib.hellocharts.view.ComboLineColumnChartView
+        android:id="@+id/chart"
+        android:layout_width="wrap_content"
+        android:layout_height="230dp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_above="@+id/textView12"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <com.millennialmedia.android.MMAdView
+        android:id="@+id/adView"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        mm:width="320"
+        mm:height="50"
+        mm:apid="203000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="24 hours"
+        android:id="@+id/textView12"
+        android:layout_above="@+id/adView"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
