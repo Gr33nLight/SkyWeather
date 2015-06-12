@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,19 +25,16 @@ import java.util.Calendar;
 import java.util.List;
 
 import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Column;
-import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.ComboLineColumnChartData;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.SubcolumnValue;
-import lecho.lib.hellocharts.view.ComboLineColumnChartView;
+import lecho.lib.hellocharts.view.LineChartView;
 
 
 public class DaySpecsFragment extends Fragment {
     RelativeLayout container;
     MMAdView adViewFromXml;
+    private String[] data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +46,7 @@ public class DaySpecsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         new Graph().execute();
         ImageButton back = (ImageButton) view.findViewById(R.id.back);
+        TextView timeH1, timeH2, timeH3, timeH4,timeH1G,timeH2G,timeH3G,timeH4G,timeNow;
         container = (RelativeLayout) view.findViewById(R.id.container);
         adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
 
@@ -64,13 +63,22 @@ public class DaySpecsFragment extends Fragment {
                 MainActivity.jumpToPage(0);
             }
         });
-        String[] data = MainActivity.getData();
+        data = MainActivity.getData();
         TextView wind, humidity, precip, summary, pressure, rainH1, rainH2, rainH3;
         wind = (TextView) view.findViewById(R.id.windText);
         humidity = (TextView) view.findViewById(R.id.humidityText);
         precip = (TextView) view.findViewById(R.id.precipText);
         summary = (TextView) view.findViewById(R.id.summary);
         pressure = (TextView) view.findViewById(R.id.pressureText);
+        timeH1 = (TextView) view.findViewById(R.id.timeH1);
+        timeH2 = (TextView) view.findViewById(R.id.timeH2);
+        timeH3 = (TextView) view.findViewById(R.id.timeH3);
+        timeH4 = (TextView) view.findViewById(R.id.timeH4);
+        timeH1G = (TextView) view.findViewById(R.id.timeH1G);
+        timeH2G = (TextView) view.findViewById(R.id.timeH2G);
+        timeH3G = (TextView) view.findViewById(R.id.timeH3G);
+        timeH4G = (TextView) view.findViewById(R.id.timeH4G);
+        timeNow= (TextView) view.findViewById(R.id.timeNow);
         Calendar c = Calendar.getInstance();
 //        int hour = c.get(Calendar.HOUR_OF_DAY);
 //        c.add(Calendar.HOUR_OF_DAY, 12);
@@ -80,6 +88,16 @@ public class DaySpecsFragment extends Fragment {
         precip.setText(data[16]);
         summary.setText(data[17]);
         pressure.setText(data[4]);
+        timeH1.setText(data[33]);
+        timeH2.setText(data[34]);
+        timeH3.setText(data[35]);
+        timeH4.setText(data[36]);
+        timeH1G.setText(data[33]);
+        timeH2G.setText(data[34]);
+        timeH3G.setText(data[35]);
+        timeH4G.setText(data[36]);
+        timeNow.setText(data[41]);
+        setIcons(view);
     }
 
     class Graph extends AsyncTask<Void, Void, Void> {
@@ -94,7 +112,8 @@ public class DaySpecsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                ComboLineColumnChartView chart = (ComboLineColumnChartView) getActivity().findViewById(R.id.chart);
+
+                LineChartView chart = (LineChartView) getActivity().findViewById(R.id.chart);
                 ForecastIO fio = new ForecastIO("df2fd8be38bc1a254b610d11f1d65884");
                 fio.setUnits(ForecastIO.UNITS_SI);             //sets the units as SI - optional
                 fio.setExcludeURL("minutely");
@@ -115,26 +134,14 @@ public class DaySpecsFragment extends Fragment {
                 lines.add(line);
                 LineChartData dataL = new LineChartData(lines);
                 dataL.setLines(lines);
-                //setting ColumnChart
-                List<Column> columns = new ArrayList<Column>();
-                List<SubcolumnValue> values;
-                for (int i = 2; i <= 26; i += 2) {
-                    double precip = hourly.getHour(i).precipIntensity() * 10;
-                    Log.d("Forecastio", "PrecipIntensity: " + precip);
-                    float precipF = (float) precip;
-                    values = new ArrayList<SubcolumnValue>();
-                    values.add(new SubcolumnValue(precipF, Color.parseColor("#bdc3c7")));
-                    columns.add(new Column(values));
-                }
-                ColumnChartData dataC = new ColumnChartData(columns);
-                ComboLineColumnChartData data = new ComboLineColumnChartData(dataC, dataL);
+                LineChartData data = new LineChartData(dataL);
                 Axis axisY = new Axis().setHasLines(false);
                 axisY.setName("Temperatures (" + (char) 0x00B0 + "C)");
                 data.setAxisYLeft(axisY);
                 chart.setInteractive(false);
                 chart.setZoomEnabled(false);
                 chart.setScrollEnabled(false);
-                chart.setComboLineColumnChartData(data);
+                chart.setLineChartData(data);
                 return null;
             } catch (Exception e) {
                 return null;
@@ -159,6 +166,148 @@ public class DaySpecsFragment extends Fragment {
             container.setBackgroundColor(Color.parseColor("#F57F17"));
         }
     }
+
+    private void setIcons(View view) {
+        ImageView icnH1, icnH2, icnH3, icnH4;
+        icnH1 = (ImageView) view.findViewById(R.id.icnH1);
+        icnH2 = (ImageView) view.findViewById(R.id.icnH2);
+        icnH3 = (ImageView) view.findViewById(R.id.icnH3);
+        icnH4 = (ImageView) view.findViewById(R.id.icnH4);
+        String icH1 = data[37].replace("\"", "");
+        switch (icH1) {
+            case "partly-cloudy-day":
+                icnH1.setImageResource(R.drawable.cloudsun);
+                break;
+            case "partly-cloudy-night":
+                icnH1.setImageResource(R.drawable.cloudmoon);
+                break;
+            case "cloudy":
+                icnH1.setImageResource(R.drawable.cloud);
+                break;
+            case "fog":
+                icnH1.setImageResource(R.drawable.fog);
+                break;
+            case "wind":
+                icnH1.setImageResource(R.drawable.wind);
+                break;
+            case "sleet":
+                icnH1.setImageResource(R.drawable.sleet);
+                break;
+            case "snow":
+                icnH1.setImageResource(R.drawable.snow);
+                break;
+            case "rain":
+                icnH1.setImageResource(R.drawable.rain);
+                break;
+            case "clear-night":
+                icnH1.setImageResource(R.drawable.clearnight);
+                break;
+            default:
+                icnH1.setImageResource(R.drawable.clearday);
+                break;
+        }
+        String icH2 = data[38].replace("\"", "");
+        switch (icH2) {
+            case "partly-cloudy-day":
+                icnH2.setImageResource(R.drawable.cloudsun);
+                break;
+            case "partly-cloudy-night":
+                icnH2.setImageResource(R.drawable.cloudmoon);
+                break;
+            case "cloudy":
+                icnH2.setImageResource(R.drawable.cloud);
+                break;
+            case "fog":
+                icnH2.setImageResource(R.drawable.fog);
+                break;
+            case "wind":
+                icnH2.setImageResource(R.drawable.wind);
+                break;
+            case "sleet":
+                icnH2.setImageResource(R.drawable.sleet);
+                break;
+            case "snow":
+                icnH2.setImageResource(R.drawable.snow);
+                break;
+            case "rain":
+                icnH2.setImageResource(R.drawable.rain);
+                break;
+            case "clear-night":
+                icnH2.setImageResource(R.drawable.clearnight);
+                break;
+            default:
+                icnH2.setImageResource(R.drawable.clearday);
+                break;
+        }
+        String icH3 = data[39].replace("\"", "");
+        switch (icH3) {
+            case "partly-cloudy-day":
+                icnH3.setImageResource(R.drawable.cloudsun);
+                break;
+            case "partly-cloudy-night":
+                icnH3.setImageResource(R.drawable.cloudmoon);
+                break;
+            case "cloudy":
+                icnH3.setImageResource(R.drawable.cloud);
+                break;
+            case "fog":
+                icnH3.setImageResource(R.drawable.fog);
+                break;
+            case "wind":
+                icnH3.setImageResource(R.drawable.wind);
+                break;
+            case "sleet":
+                icnH3.setImageResource(R.drawable.sleet);
+                break;
+            case "snow":
+                icnH3.setImageResource(R.drawable.snow);
+                break;
+            case "rain":
+                icnH3.setImageResource(R.drawable.rain);
+                break;
+            case "clear-night":
+                icnH3.setImageResource(R.drawable.clearnight);
+                break;
+            default:
+                icnH3.setImageResource(R.drawable.clearday);
+                break;
+        }
+        String icH4 = data[40].replace("\"", "");
+        switch (icH4) {
+            case "partly-cloudy-day":
+                icnH4.setImageResource(R.drawable.cloudsun);
+                break;
+            case "partly-cloudy-night":
+                icnH4.setImageResource(R.drawable.cloudmoon);
+                break;
+            case "cloudy":
+                icnH4.setImageResource(R.drawable.cloud);
+                break;
+            case "fog":
+                icnH4.setImageResource(R.drawable.fog);
+                break;
+            case "wind":
+                icnH4.setImageResource(R.drawable.wind);
+                break;
+            case "sleet":
+                icnH4.setImageResource(R.drawable.sleet);
+                break;
+            case "snow":
+                icnH4.setImageResource(R.drawable.snow);
+                break;
+            case "rain":
+                icnH4.setImageResource(R.drawable.rain);
+                break;
+            case "clear-night":
+                icnH4.setImageResource(R.drawable.clearnight);
+                break;
+            default:
+                icnH4.setImageResource(R.drawable.clearday);
+                break;
+        }
+
+    }
+
 
     @Override
     public void onResume() {

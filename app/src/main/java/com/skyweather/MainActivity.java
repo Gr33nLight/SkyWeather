@@ -79,16 +79,16 @@ public class MainActivity extends ActionBarActivity {
                     String icn = currently.get().icon();
                     int tempI = currently.get().temperature().intValue();
                     String temp = Integer.toString(tempI);
-                    String tmax =Integer.toString(daily.getDay(0).temperatureMax().intValue());
-                    String tmin =Integer.toString(daily.getDay(0).temperatureMin().intValue());
+                    String tmax = Integer.toString(daily.getDay(0).temperatureMax().intValue());
+                    String tmin = Integer.toString(daily.getDay(0).temperatureMin().intValue());
                     Double humidityVal = currently.get().humidity() * 100;
-                    String humidity = String.format("%.0f", humidityVal)+"%";
-                    String pressure = String.format("%.0f", currently.get().pressure())+" mb";
+                    String humidity = String.format("%.0f", humidityVal) + "%";
+                    String pressure = String.format("%.0f", currently.get().pressure()) + " mb";
 //               multiply 1.609 to convert to kmh
                     Double windVal = currently.get().windSpeed() * 1.609;
-                    String wind = String.format("%.0f", windVal)+" Km/h";
+                    String wind = String.format("%.0f", windVal) + " Km/h";
                     Double precipVal = currently.get().precipProbability() * 100;
-                    String precip = String.format("%.0f", precipVal)+"%";
+                    String precip = String.format("%.0f", precipVal) + "%";
 //                    Log.d("Callapi", "PrecipProbability: " + currently.get().precipProbability());
                     String summray = fio.getHourly().get("summary").toString();
                     String day1ico = daily.getDay(1).icon();
@@ -97,60 +97,55 @@ public class MainActivity extends ActionBarActivity {
                     String day1Sum = daily.getDay(1).summary();
                     String day2Sum = daily.getDay(2).summary();
                     String day3Sum = daily.getDay(3).summary();
-                    boolean trovato = false;
                     int i = 2;
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.DATE, 1);
                     while (i < 30) {
                         if (Integer.parseInt(hourly.getHour(i).time().substring(0, 2)) == cal.get(Calendar.DAY_OF_MONTH)) {
-                            trovato = true;
                             break;
                         }
                         i++;
                     }
                     String day1MorningIcn, day1AfternoonIcn, day1EveningIcn, day2MorningIcn, day2AfternoonIcnn, day2EveningIcn,
-                            day3MorningIcn, day3AfternoonIcn, day3EveningIcn;
+                            day3MorningIcn, day3AfternoonIcn, day3EveningIcn, icnH1, icnH2, icnH3, icnH4, timeH1, timeH2, timeH3, timeH4,timeNow;
                     int mattinaH = 7, pomeriggioH = 17, seraH = 20;
-                    if (trovato) {
-                        day1MorningIcn = hourly.getHour(i + mattinaH).icon();
-                        day1AfternoonIcn = hourly.getHour(i + pomeriggioH).icon();
-                        day1EveningIcn = hourly.getHour(i + seraH).icon();
-                        day2MorningIcn = hourly.getHour(i + 24 + mattinaH).icon();
-                        day2AfternoonIcnn = hourly.getHour(i + 24 + pomeriggioH).icon();
-                        day2EveningIcn = hourly.getHour(i + 24 + seraH).icon();
-                        day3MorningIcn = hourly.getHour(i + 48 + mattinaH).icon();
-                        day3AfternoonIcn = hourly.getHour(i + 48 + pomeriggioH).icon();
-                        day3EveningIcn = hourly.getHour(i + 48 + seraH).icon();
-                    } else {
-                        day1MorningIcn = "NA";
-                        day1AfternoonIcn = "NA";
-                        day1EveningIcn = "NA";
-                        day2MorningIcn = "NA";
-                        day2AfternoonIcnn = "NA";
-                        day2EveningIcn = "NA";
-                        day3MorningIcn = "NA";
-                        day3AfternoonIcn = "NA";
-                        day3EveningIcn = "NA";
-                    }
+                    timeH1 = hourly.getHour(8).time().substring(11, 16);
+                    timeH2 = hourly.getHour(14).time().substring(11, 16);
+                    timeH3 = hourly.getHour(20).time().substring(11, 16);
+                    timeH4 = hourly.getHour(26).time().substring(11, 16);
+                    timeNow=hourly.getHour(2).time().substring(11,16);
+                    icnH1 = hourly.getHour(8).icon();
+                    icnH2 = hourly.getHour(14).icon();
+                    icnH3 = hourly.getHour(20).icon();
+                    icnH4 = hourly.getHour(26).icon();
+                    day1MorningIcn = hourly.getHour(i + mattinaH).icon();
+                    day1AfternoonIcn = hourly.getHour(i + pomeriggioH).icon();
+                    day1EveningIcn = hourly.getHour(i + seraH).icon();
+                    day2MorningIcn = hourly.getHour(i + 24 + mattinaH).icon();
+                    day2AfternoonIcnn = hourly.getHour(i + 24 + pomeriggioH).icon();
+                    day2EveningIcn = hourly.getHour(i + 24 + seraH).icon();
+                    day3MorningIcn = hourly.getHour(i + 48 + mattinaH).icon();
+                    day3AfternoonIcn = hourly.getHour(i + 48 + pomeriggioH).icon();
+                    day3EveningIcn = hourly.getHour(i + 48 + seraH).icon();
                     String day1Max = Integer.toString(daily.getDay(1).temperatureMax().intValue());
                     String day1Min = Integer.toString(daily.getDay(1).temperatureMin().intValue());
                     String day2Max = Integer.toString(daily.getDay(2).temperatureMax().intValue());
                     String day2Min = Integer.toString(daily.getDay(2).temperatureMin().intValue());
                     String day3Max = Integer.toString(daily.getDay(3).temperatureMax().intValue());
                     String day3Min = Integer.toString(daily.getDay(3).temperatureMin().intValue());
-                    Double day1PrecVal = daily.getDay(1).precipProbability()*100;
-                    String day1Prec =String.format("%.0f", day1PrecVal)+"%";
-                    Double day2PrecVal = daily.getDay(2).precipProbability()*100;
-                    String day2Prec =String.format("%.0f", day2PrecVal)+"%";
-                    Double day3PrecVal = daily.getDay(3).precipProbability()*100;
-                    String day3Prec =String.format("%.0f", day3PrecVal)+"";
+                    Double day1PrecVal = daily.getDay(1).precipProbability() * 100;
+                    String day1Prec = String.format("%.0f", day1PrecVal) + "%";
+                    Double day2PrecVal = daily.getDay(2).precipProbability() * 100;
+                    String day2Prec = String.format("%.0f", day2PrecVal) + "%";
+                    Double day3PrecVal = daily.getDay(3).precipProbability() * 100;
+                    String day3Prec = String.format("%.0f", day3PrecVal) + "";
                     return new String[]{temp, tmax, tmin, humidity, pressure, wind, icn, day1ico, day2ico, day3ico, day1Max, day1Min, day2Max, day2Min, day3Max,
                             day3Min, precip, summray, day1MorningIcn, day1AfternoonIcn, day1EveningIcn, day2MorningIcn, day2AfternoonIcnn, day2EveningIcn, day3MorningIcn, day3AfternoonIcn,
-                            day3EveningIcn, day1Sum, day2Sum, day3Sum,day1Prec,day2Prec,day3Prec};
+                            day3EveningIcn, day1Sum, day2Sum, day3Sum, day1Prec, day2Prec, day3Prec, timeH1, timeH2, timeH3, timeH4, icnH1, icnH2, icnH3, icnH4,timeNow};
                 }
                 return null;
             } catch (Exception e) {
-                Log.d("Callapi","Exception!!");
+                Log.d("Callapi", "Exception!!");
                 return null;
             }
         }
@@ -160,11 +155,12 @@ public class MainActivity extends ActionBarActivity {
             if (output != null) {
                 out = output;
                 switchC();
-            }else if(ok){
-                Log.d("Callapi","Trying again!!");
-                try{
+            } else if (ok) {
+                Log.d("Callapi", "Trying again!!");
+                try {
                     Thread.sleep(500);
-                }catch (InterruptedException e) {}
+                } catch (InterruptedException e) {
+                }
                 new CallApi().execute();
             }
         }
@@ -207,8 +203,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         if (mPager.getCurrentItem() == 0) {
-                    // If the user is currently looking at the first step, allow the system to handle the
-                    // Back button. This calls finish() on this activity and pops the back stack.
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
         } else {
             // Otherwise, select the previous step.
@@ -228,7 +224,8 @@ public class MainActivity extends ActionBarActivity {
                     return new DataFragment();
                 case 1:
                     return new DaySpecsFragment();
-                default: return new DataFragment();
+                default:
+                    return new DataFragment();
             }
         }
 

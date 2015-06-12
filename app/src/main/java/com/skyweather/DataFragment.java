@@ -47,6 +47,8 @@ public class DataFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 if (box != null) {
+                    if (day1Layout.isShown() && day2Layout.isShown() && day3Layout.isShown() && !box.isShown())
+                        MainActivity.jumpToPage(1);
                     box.setVisibility(View.GONE);
                     day1Layout.setVisibility(View.VISIBLE);
                     day3Layout.setVisibility(View.VISIBLE);
@@ -127,7 +129,7 @@ public class DataFragment extends android.support.v4.app.Fragment {
         icnDay2 = (ImageView) view.findViewById(R.id.icnDay2);
         icnDay3 = (ImageView) view.findViewById(R.id.icnDay3);
         daySpec1 = (ImageView) view.findViewById(R.id.daySpecsIcn1);
-        daySpec2 = (ImageView)view.findViewById(R.id.daySpecsIcn2);
+        daySpec2 = (ImageView) view.findViewById(R.id.daySpecsIcn2);
         daySpec3 = (ImageView) view.findViewById(R.id.daySpecsIcn3);
         day1 = (TextView) view.findViewById(R.id.day1);
         day2 = (TextView) view.findViewById(R.id.day2);
@@ -465,6 +467,7 @@ public class DataFragment extends android.support.v4.app.Fragment {
                 break;
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -543,29 +546,26 @@ public class DataFragment extends android.support.v4.app.Fragment {
         //Add method to change background here, pass parameters via method call
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean isSetToTrue = prefs.getBoolean("checkbox", true);
-        String theme =  prefs.getString("list", "1");
+        String theme = prefs.getString("list", "1");
         if (isSetToTrue) {
             setBackground();
-        }else{
-            if("2".equals(theme)){
+        } else {
+            if ("2".equals(theme)) {
                 myLayout.setBackgroundColor(Color.parseColor("#3498db"));
                 stats.setBackgroundColor(Color.parseColor("#3498db"));
                 weekDays.setBackgroundColor(Color.parseColor("#2980b9"));
                 box.setBackgroundColor(Color.parseColor("#FF004B88"));
-            }
-            else if("3".equals(theme)){
+            } else if ("3".equals(theme)) {
                 myLayout.setBackgroundColor(Color.parseColor("#F9A825"));
                 stats.setBackgroundColor(Color.parseColor("#F9A825"));
                 weekDays.setBackgroundColor(Color.parseColor("#F57F17"));
                 box.setBackgroundColor(Color.parseColor("#B35A12"));
-            }
-            else if("4".equals(theme)){
+            } else if ("4".equals(theme)) {
                 myLayout.setBackgroundColor(Color.parseColor("#2c3e50"));
                 stats.setBackgroundColor(Color.parseColor("#2c3e50"));
                 weekDays.setBackgroundColor(Color.parseColor("#263238"));
                 box.setBackgroundColor(Color.parseColor("#FF111F25"));
-            }
-            else{
+            } else {
                 myLayout.setBackgroundColor(Color.parseColor("#424242"));
                 stats.setBackgroundColor(Color.parseColor("#424242"));
                 weekDays.setBackgroundColor(Color.parseColor("#ff242424"));
