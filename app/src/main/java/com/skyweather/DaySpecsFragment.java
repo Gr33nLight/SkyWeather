@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
@@ -46,7 +47,7 @@ public class DaySpecsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         new Graph().execute();
         ImageButton back = (ImageButton) view.findViewById(R.id.back);
-        TextView timeH1, timeH2, timeH3, timeH4,timeH1G,timeH2G,timeH3G,timeH4G,timeNow;
+        TextView timeH1, timeH2, timeH3, timeH4;
         container = (RelativeLayout) view.findViewById(R.id.container);
         adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
 
@@ -64,7 +65,7 @@ public class DaySpecsFragment extends Fragment {
             }
         });
         data = MainActivity.getData();
-        TextView wind, humidity, precip, summary, pressure, rainH1, rainH2, rainH3;
+        TextView wind, humidity, precip, summary, pressure;
         wind = (TextView) view.findViewById(R.id.windText);
         humidity = (TextView) view.findViewById(R.id.humidityText);
         precip = (TextView) view.findViewById(R.id.precipText);
@@ -74,11 +75,6 @@ public class DaySpecsFragment extends Fragment {
         timeH2 = (TextView) view.findViewById(R.id.timeH2);
         timeH3 = (TextView) view.findViewById(R.id.timeH3);
         timeH4 = (TextView) view.findViewById(R.id.timeH4);
-        timeH1G = (TextView) view.findViewById(R.id.timeH1G);
-        timeH2G = (TextView) view.findViewById(R.id.timeH2G);
-        timeH3G = (TextView) view.findViewById(R.id.timeH3G);
-        timeH4G = (TextView) view.findViewById(R.id.timeH4G);
-        timeNow= (TextView) view.findViewById(R.id.timeNow);
         Calendar c = Calendar.getInstance();
 //        int hour = c.get(Calendar.HOUR_OF_DAY);
 //        c.add(Calendar.HOUR_OF_DAY, 12);
@@ -92,11 +88,6 @@ public class DaySpecsFragment extends Fragment {
         timeH2.setText(data[34]);
         timeH3.setText(data[35]);
         timeH4.setText(data[36]);
-        timeH1G.setText(data[33]);
-        timeH2G.setText(data[34]);
-        timeH3G.setText(data[35]);
-        timeH4G.setText(data[36]);
-        timeNow.setText(data[41]);
         setIcons(view);
     }
 
@@ -134,14 +125,22 @@ public class DaySpecsFragment extends Fragment {
                 lines.add(line);
                 LineChartData dataL = new LineChartData(lines);
                 dataL.setLines(lines);
-                LineChartData data = new LineChartData(dataL);
                 Axis axisY = new Axis().setHasLines(false);
-                axisY.setName("Temperatures (" + (char) 0x00B0 + "C)");
-                data.setAxisYLeft(axisY);
+                Axis axisX=new Axis().setHasLines(false);
+                ArrayList<AxisValue> hours = new ArrayList<>();
+                hours.add(new AxisValue(0,data[41].toCharArray()));
+                hours.add(new AxisValue(3,data[33].toCharArray()));
+                hours.add(new AxisValue(6,data[34].toCharArray()));
+                hours.add(new AxisValue(9,data[35].toCharArray()));
+                hours.add(new AxisValue(12,data[36].toCharArray()));
+                axisX.setValues(hours);
+//                axisY.setName("Temperatures (" + (char) 0x00B0 + "C)");
+                dataL.setAxisYLeft(axisY);
+                dataL.setAxisXBottom(axisX);
                 chart.setInteractive(false);
                 chart.setZoomEnabled(false);
                 chart.setScrollEnabled(false);
-                chart.setLineChartData(data);
+                chart.setLineChartData(dataL);
                 return null;
             } catch (Exception e) {
                 return null;

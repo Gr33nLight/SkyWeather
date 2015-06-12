@@ -181,9 +181,10 @@
                 android:layout_height="150dp"
                 android:textColor="?android:attr/textColorSecondary"
                 android:layout_below="@+id/textView7"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="10dp" />
+                android:layout_alignParentStart="true" />
 
             <com.millennialmedia.android.MMAdView
                 android:id="@+id/adView"
@@ -330,62 +331,6 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/chart"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="13dp"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="00:00"
-                    android:id="@+id/timeNow"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="7:00"
-                    android:id="@+id/timeH1G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="12:00"
-                    android:id="@+id/timeH2G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="17:00"
-                    android:id="@+id/timeH3G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="20:00"
-                    android:id="@+id/timeH4G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
             </LinearLayout>
 
 
