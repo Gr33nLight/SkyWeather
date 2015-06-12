@@ -39,11 +39,10 @@
         android:layout_gravity="center"
         android:textAlignment="center"
         android:tint="#ffffffff"
-        android:src="@drawable/clearday"
+        android:src="@drawable/cloudsun"
         android:padding="5dp"
         android:layout_above="@+id/Stats"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp" />
+        android:layout_centerHorizontal="true" />
 
     <LinearLayout
         android:id="@+id/Stats"
@@ -60,7 +59,8 @@
         android:padding="5dp"
         android:layout_marginBottom="20dp"
         android:layout_above="@+id/weekDays"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp">
 
         <ImageView
             android:layout_width="25dp"
