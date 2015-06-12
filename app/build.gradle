@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.skyweather"
         minSdkVersion 11
-        targetSdkVersion 21
-        versionCode 3
-        versionName "1.0.2"
+        targetSdkVersion 22
+        versionCode 4
+        versionName "1.0.3"
     }
     buildTypes {
         release {
@@ -25,4 +25,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.github.lecho:hellocharts-library:1.5.5@aar'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

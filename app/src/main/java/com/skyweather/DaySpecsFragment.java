@@ -37,6 +37,7 @@ import lecho.lib.hellocharts.view.ComboLineColumnChartView;
 public class DaySpecsFragment extends Fragment {
     RelativeLayout container;
     MMAdView adViewFromXml;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.dayspecs, container, false);
@@ -56,9 +57,7 @@ public class DaySpecsFragment extends Fragment {
         adViewFromXml.setMMRequest(request);
 
         adViewFromXml.getAd();
-//        else{
-//            chartColor=Color.WHITE;
-//        }
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +65,7 @@ public class DaySpecsFragment extends Fragment {
             }
         });
         String[] data = MainActivity.getData();
-        TextView wind, humidity, precip, summary, pressure,rainH1,rainH2,rainH3;
+        TextView wind, humidity, precip, summary, pressure, rainH1, rainH2, rainH3;
         wind = (TextView) view.findViewById(R.id.windText);
         humidity = (TextView) view.findViewById(R.id.humidityText);
         precip = (TextView) view.findViewById(R.id.precipText);
@@ -120,7 +119,7 @@ public class DaySpecsFragment extends Fragment {
                 List<Column> columns = new ArrayList<Column>();
                 List<SubcolumnValue> values;
                 for (int i = 2; i <= 26; i += 2) {
-                    double precip = hourly.getHour(i).precipIntensity()*10;
+                    double precip = hourly.getHour(i).precipIntensity() * 10;
                     Log.d("Forecastio", "PrecipIntensity: " + precip);
                     float precipF = (float) precip;
                     values = new ArrayList<SubcolumnValue>();
@@ -130,7 +129,7 @@ public class DaySpecsFragment extends Fragment {
                 ColumnChartData dataC = new ColumnChartData(columns);
                 ComboLineColumnChartData data = new ComboLineColumnChartData(dataC, dataL);
                 Axis axisY = new Axis().setHasLines(false);
-                axisY.setName("Temperatures ("+(char)0x00B0+"C)");
+                axisY.setName("Temperatures (" + (char) 0x00B0 + "C)");
                 data.setAxisYLeft(axisY);
                 chart.setInteractive(false);
                 chart.setZoomEnabled(false);
@@ -168,16 +167,16 @@ public class DaySpecsFragment extends Fragment {
         //Add method to change background here, pass parameters via method call
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean isSetToTrue = prefs.getBoolean("checkbox", true);
-        String theme =  prefs.getString("list", "1");
+        String theme = prefs.getString("list", "1");
         if (isSetToTrue) {
             setBackground();
-        }else{
-            Log.d("Preferences",theme);
-            if("2".equals(theme))container.setBackgroundColor(Color.parseColor("#2980b9"));
-            else if("3".equals(theme))container.setBackgroundColor(Color.parseColor("#F57F17"));
-            else if("4".equals(theme))container.setBackgroundColor(Color.parseColor("#263238"));
-            else{
-               container.setBackgroundColor(Color.parseColor("#424242"));
+        } else {
+            Log.d("Preferences", theme);
+            if ("2".equals(theme)) container.setBackgroundColor(Color.parseColor("#2980b9"));
+            else if ("3".equals(theme)) container.setBackgroundColor(Color.parseColor("#F57F17"));
+            else if ("4".equals(theme)) container.setBackgroundColor(Color.parseColor("#263238"));
+            else {
+                container.setBackgroundColor(Color.parseColor("#424242"));
             }
         }
     }

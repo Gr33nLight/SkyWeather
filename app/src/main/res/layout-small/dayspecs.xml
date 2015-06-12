@@ -21,14 +21,15 @@
             android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginRight="20dp">
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:text="Wind (kmh)"
+                android:text="Wind"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#fffbfbfd"
                 android:textSize="20sp" />
@@ -38,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:text="Humidity %"
+                android:text="Humidity"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#fffbfbfd"
                 android:textSize="20sp" />
@@ -48,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="3dp"
-                android:text="Precipitation %"
+                android:text="Rain"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#fffbfbfd"
                 android:textSize="20sp" />
@@ -178,7 +179,7 @@
         android:layout_centerHorizontal="true"
         mm:width="320"
         mm:height="50"
-        mm:apid="203000" />
+        mm:apid="203000s" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -186,7 +187,8 @@
         android:text="24 hours"
         android:id="@+id/textView12"
         android:layout_above="@+id/adView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp" />
 
 
 </RelativeLayout>

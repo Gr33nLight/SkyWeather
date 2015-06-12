@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -29,7 +28,6 @@ public class MainActivity extends ActionBarActivity {
     private static final String tag = "FORECASTIO by gr33n";
     private static final int NUM_PAGES = 2;
     public static ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
     private static String[] out;
     private static double coordinates[] = new double[2];
 
@@ -81,16 +79,16 @@ public class MainActivity extends ActionBarActivity {
                     String icn = currently.get().icon();
                     int tempI = currently.get().temperature().intValue();
                     String temp = Integer.toString(tempI);
-                    String tmax = daily.getDay(0).temperatureMax().toString();
-                    String tmin = daily.getDay(0).temperatureMin().toString();
+                    String tmax =Integer.toString(daily.getDay(0).temperatureMax().intValue());
+                    String tmin =Integer.toString(daily.getDay(0).temperatureMin().intValue());
                     Double humidityVal = currently.get().humidity() * 100;
-                    String humidity = String.format("%.0f", humidityVal);
-                    String pressure = String.format("%.0f", currently.get().pressure());
+                    String humidity = String.format("%.0f", humidityVal)+"%";
+                    String pressure = String.format("%.0f", currently.get().pressure())+" mb";
 //               multiply 1.609 to convert to kmh
                     Double windVal = currently.get().windSpeed() * 1.609;
-                    String wind = String.format("%.2f", windVal);
+                    String wind = String.format("%.0f", windVal)+" Km/h";
                     Double precipVal = currently.get().precipProbability() * 100;
-                    String precip = String.format("%.0f", precipVal);
+                    String precip = String.format("%.0f", precipVal)+"%";
 //                    Log.d("Callapi", "PrecipProbability: " + currently.get().precipProbability());
                     String summray = fio.getHourly().get("summary").toString();
                     String day1ico = daily.getDay(1).icon();
@@ -141,12 +139,11 @@ public class MainActivity extends ActionBarActivity {
                     String day3Max = Integer.toString(daily.getDay(3).temperatureMax().intValue());
                     String day3Min = Integer.toString(daily.getDay(3).temperatureMin().intValue());
                     Double day1PrecVal = daily.getDay(1).precipProbability()*100;
-                    String day1Prec =String.format("%.0f", day1PrecVal);
+                    String day1Prec =String.format("%.0f", day1PrecVal)+"%";
                     Double day2PrecVal = daily.getDay(2).precipProbability()*100;
-                    String day2Prec =String.format("%.0f", day2PrecVal);
+                    String day2Prec =String.format("%.0f", day2PrecVal)+"%";
                     Double day3PrecVal = daily.getDay(3).precipProbability()*100;
-                    Log.d("forecastio precipProb",""+day3PrecVal);
-                    String day3Prec =String.format("%.0f", day3PrecVal);
+                    String day3Prec =String.format("%.0f", day3PrecVal)+"";
                     return new String[]{temp, tmax, tmin, humidity, pressure, wind, icn, day1ico, day2ico, day3ico, day1Max, day1Min, day2Max, day2Min, day3Max,
                             day3Min, precip, summray, day1MorningIcn, day1AfternoonIcn, day1EveningIcn, day2MorningIcn, day2AfternoonIcnn, day2EveningIcn, day3MorningIcn, day3AfternoonIcn,
                             day3EveningIcn, day1Sum, day2Sum, day3Sum,day1Prec,day2Prec,day3Prec};
@@ -176,9 +173,8 @@ public class MainActivity extends ActionBarActivity {
     private void switchC() {
         Log.d("CALLAPI", "Switching to DataFragment view");
         setContentView(R.layout.screen_slider);
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
+        mPager = (ViewPager) findViewById(R.id.viewpager);
+        mPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
     }
 
     public static String[] getData() {

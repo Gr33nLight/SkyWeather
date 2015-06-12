@@ -38,32 +38,6 @@ public class DataFragment extends android.support.v4.app.Fragment {
         myLayout = (RelativeLayout) view.findViewById(R.id.my_layout);
         weekDays = (LinearLayout) view.findViewById(R.id.weekDays);
         stats = (LinearLayout) view.findViewById(R.id.Stats);
-        //checkbox
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean isSetToTrue = prefs.getBoolean("checkbox", true);
-        String theme =  prefs.getString("list", "1");
-        if (isSetToTrue) {
-            setBackground();
-        }else{
-            Log.d("Preferences",theme);
-            if(theme.equals("2")){
-                myLayout.setBackgroundColor(Color.parseColor("#2980b9"));
-                weekDays.setBackgroundColor(Color.parseColor("#2980b9"));
-                stats.setBackgroundColor(Color.parseColor("#2980b9"));
-                box.setBackgroundColor(Color.parseColor("#2980b9"));
-            }else if(theme.equals("3")){
-                myLayout.setBackgroundColor(Color.parseColor("#F57F17"));
-                weekDays.setBackgroundColor(Color.parseColor("#F57F17"));
-                stats.setBackgroundColor(Color.parseColor("#F57F17"));
-                box.setBackgroundColor(Color.parseColor("#F57F17"));
-            }
-            else if(theme.equals("4")){
-                myLayout.setBackgroundColor(Color.parseColor("#263238"));
-                weekDays.setBackgroundColor(Color.parseColor("#263238"));
-                stats.setBackgroundColor(Color.parseColor("#263238"));
-                box.setBackgroundColor(Color.parseColor("#263238"));
-            }
-        }
         day1Layout = (RelativeLayout) view.findViewById(R.id.day1Layout);
         day2Layout = (RelativeLayout) view.findViewById(R.id.day2Layout);
         day3Layout = (RelativeLayout) view.findViewById(R.id.day3Layout);
@@ -554,13 +528,14 @@ public class DataFragment extends android.support.v4.app.Fragment {
         ObjectAnimator.ofObject(weekDays, "backgroundColor", new ArgbEvaluator(), colorFrom, colorToF)
                 .setDuration(duration)
                 .start();
-        ObjectAnimator.ofObject(stats, "backgroundColor", new ArgbEvaluator(), colorFrom, colorToF)
+        ObjectAnimator.ofObject(stats, "backgroundColor", new ArgbEvaluator(), colorFrom, colorToB)
                 .setDuration(duration)
                 .start();
         ObjectAnimator.ofObject(box, "backgroundColor", new ArgbEvaluator(), colorFrom, colorToSpecs)
                 .setDuration(duration)
                 .start();
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -574,25 +549,25 @@ public class DataFragment extends android.support.v4.app.Fragment {
         }else{
             if("2".equals(theme)){
                 myLayout.setBackgroundColor(Color.parseColor("#3498db"));
-                stats.setBackgroundColor(Color.parseColor("#2980b9"));
+                stats.setBackgroundColor(Color.parseColor("#3498db"));
                 weekDays.setBackgroundColor(Color.parseColor("#2980b9"));
                 box.setBackgroundColor(Color.parseColor("#FF004B88"));
             }
             else if("3".equals(theme)){
                 myLayout.setBackgroundColor(Color.parseColor("#F9A825"));
-                stats.setBackgroundColor(Color.parseColor("#F57F17"));
+                stats.setBackgroundColor(Color.parseColor("#F9A825"));
                 weekDays.setBackgroundColor(Color.parseColor("#F57F17"));
                 box.setBackgroundColor(Color.parseColor("#B35A12"));
             }
             else if("4".equals(theme)){
                 myLayout.setBackgroundColor(Color.parseColor("#2c3e50"));
-                stats.setBackgroundColor(Color.parseColor("#263238"));
+                stats.setBackgroundColor(Color.parseColor("#2c3e50"));
                 weekDays.setBackgroundColor(Color.parseColor("#263238"));
                 box.setBackgroundColor(Color.parseColor("#FF111F25"));
             }
             else{
                 myLayout.setBackgroundColor(Color.parseColor("#424242"));
-                stats.setBackgroundColor(Color.parseColor("#ff242424"));
+                stats.setBackgroundColor(Color.parseColor("#424242"));
                 weekDays.setBackgroundColor(Color.parseColor("#ff242424"));
                 box.setBackgroundColor(Color.parseColor("#ff141414"));
             }
