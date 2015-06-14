@@ -21,6 +21,7 @@ import com.github.dvdme.ForecastIOLib.FIOCurrently;
 import com.github.dvdme.ForecastIOLib.FIODaily;
 import com.github.dvdme.ForecastIOLib.FIOHourly;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
+import com.millennialmedia.android.MMSDK;
 
 import java.util.Calendar;
 
@@ -34,6 +35,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MMSDK.initialize(this);
         setContentView(R.layout.activity_main);
         new CallApi().execute();
     }

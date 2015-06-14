@@ -4,16 +4,24 @@
     android:id="@+id/container"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:theme="@style/TabletTheme"
     android:background="#ff242424">
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/scroll"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
@@ -139,19 +147,6 @@
                 android:background="@drawable/ic_arrow_left" />
 
             <TextView
-                android:id="@+id/textView7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Next 24 hours"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#fffbfbfd"
-                android:textSize="15sp"
-                android:layout_below="@+id/relativeLayout3"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="16dp" />
-
-            <TextView
                 android:id="@+id/summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -171,25 +166,26 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/back"
                 android:layout_centerHorizontal="true"
-                android:text="Today"
+                android:text="Now"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#fffbfbfd" />
 
-            <lecho.lib.hellocharts.view.LineChartView
+            <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart"
-                android:layout_width="fill_parent"
-                android:layout_height="150dp"
-                android:textColor="?android:attr/textColorSecondary"
-                android:layout_below="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="10dp" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_above="@+id/adView"
+                android:layout_below="@+id/relativeLayout3" />
 
             <com.millennialmedia.android.MMAdView
                 android:id="@+id/adView"
                 android:layout_width="320dp"
                 android:layout_height="50dp"
-                mm:apid="203000d"
+                mm:apid="203000"
                 mm:height="50"
                 mm:width="320"
                 android:layout_alignParentBottom="true"
@@ -330,62 +326,6 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/chart"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="13dp"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="00:00"
-                    android:id="@+id/timeNow"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="7:00"
-                    android:id="@+id/timeH1G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="12:00"
-                    android:id="@+id/timeH2G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="17:00"
-                    android:id="@+id/timeH3G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="20:00"
-                    android:id="@+id/timeH4G"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal" />
             </LinearLayout>
 
 

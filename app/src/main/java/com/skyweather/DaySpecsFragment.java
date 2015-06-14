@@ -17,25 +17,25 @@ import android.widget.TextView;
 
 import com.github.dvdme.ForecastIOLib.FIOHourly;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ValueFormatter;
 import com.millennialmedia.android.MMAdView;
 import com.millennialmedia.android.MMRequest;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.view.LineChartView;
 
 
 public class DaySpecsFragment extends Fragment {
-    RelativeLayout container;
-    MMAdView adViewFromXml;
+    private RelativeLayout container;
     private String[] data;
+    private LineChart chart;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,26 +45,28 @@ public class DaySpecsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        chart = (LineChart) view.findViewById(R.id.chart);
+        chart.setNoDataText("Loading data...");
+        Log.d("ONVIEWCREATED", "DaySpecsFragment");
+        data = MainActivity.getData();
         new Graph().execute();
         ImageButton back = (ImageButton) view.findViewById(R.id.back);
         TextView timeH1, timeH2, timeH3, timeH4;
         container = (RelativeLayout) view.findViewById(R.id.container);
-        adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
-
-//MMRequest object
-        MMRequest request = new MMRequest();
-
-        adViewFromXml.setMMRequest(request);
-
-        adViewFromXml.getAd();
-
+        //MMRequest object ADS
+        try {
+            MMAdView adViewFromXml;
+            MMRequest request = new MMRequest();
+            adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
+            adViewFromXml.setMMRequest(request);
+            adViewFromXml.getAd();
+        }catch (Exception e ){}
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity.jumpToPage(0);
             }
         });
-        data = MainActivity.getData();
         TextView wind, humidity, precip, summary, pressure;
         wind = (TextView) view.findViewById(R.id.windText);
         humidity = (TextView) view.findViewById(R.id.humidityText);
@@ -75,10 +77,6 @@ public class DaySpecsFragment extends Fragment {
         timeH2 = (TextView) view.findViewById(R.id.timeH2);
         timeH3 = (TextView) view.findViewById(R.id.timeH3);
         timeH4 = (TextView) view.findViewById(R.id.timeH4);
-        Calendar c = Calendar.getInstance();
-//        int hour = c.get(Calendar.HOUR_OF_DAY);
-//        c.add(Calendar.HOUR_OF_DAY, 12);
-
         wind.setText(data[5]);
         humidity.setText(data[3]);
         precip.setText(data[16]);
@@ -91,9 +89,8 @@ public class DaySpecsFragment extends Fragment {
         setIcons(view);
     }
 
-    class Graph extends AsyncTask<Void, Void, Void> {
+    class Graph extends AsyncTask<Void, Void, FIOHourly> implements ValueFormatter {
         double[] coords;
-        private ArrayList<PointValue> pointValues;
 
         @Override
         protected void onPreExecute() {
@@ -101,50 +98,76 @@ public class DaySpecsFragment extends Fragment {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected FIOHourly doInBackground(Void... params) {
             try {
-
-                LineChartView chart = (LineChartView) getActivity().findViewById(R.id.chart);
                 ForecastIO fio = new ForecastIO("df2fd8be38bc1a254b610d11f1d65884");
                 fio.setUnits(ForecastIO.UNITS_SI);             //sets the units as SI - optional
                 fio.setExcludeURL("minutely");
                 fio.setExtend(true);
                 fio.getForecast("" + coords[0], "" + coords[1]);
-                FIOHourly hourly = new FIOHourly(fio);
-                //setting LineChart
-                int j = 2;
-                pointValues = new ArrayList<PointValue>();
-                for (int i = 0; i <= 12; i++) {
-                    Double temp = hourly.getHour(j).temperature();
-                    Log.d("Forecastio", "Temp: " + temp);
-                    pointValues.add(new PointValue(i, temp.intValue()));
-                    j += 2;
-                }
-                Line line = new Line(pointValues).setColor(Color.WHITE);
-                List<Line> lines = new ArrayList<Line>();
-                lines.add(line);
-                LineChartData dataL = new LineChartData(lines);
-                dataL.setLines(lines);
-                Axis axisY = new Axis().setHasLines(false);
-                Axis axisX=new Axis().setHasLines(false);
-                ArrayList<AxisValue> hours = new ArrayList<>();
-                hours.add(new AxisValue(0,data[41].toCharArray()));
-                hours.add(new AxisValue(3,data[33].toCharArray()));
-                hours.add(new AxisValue(6,data[34].toCharArray()));
-                hours.add(new AxisValue(9,data[35].toCharArray()));
-                hours.add(new AxisValue(12,data[36].toCharArray()));
-                axisX.setValues(hours);
-//                axisY.setName("Temperatures (" + (char) 0x00B0 + "C)");
-                dataL.setAxisYLeft(axisY);
-                dataL.setAxisXBottom(axisX);
-                chart.setInteractive(false);
-                chart.setZoomEnabled(false);
-                chart.setScrollEnabled(false);
-                chart.setLineChartData(dataL);
-                return null;
+                return new FIOHourly(fio);
             } catch (Exception e) {
                 return null;
             }
+        }
+
+        @Override
+        protected void onPostExecute(FIOHourly hourly) {
+            //setting LineChart
+            //Y Axis
+            YAxis leftAxis = chart.getAxisLeft();
+            YAxis rightAxis = chart.getAxisRight();
+            rightAxis.setEnabled(false);
+            leftAxis.setEnabled(false);
+            //X Axis
+            XAxis xAxis = chart.getXAxis();
+            xAxis.setTextColor(Color.WHITE);
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setTextSize(10);
+            xAxis.setDrawAxisLine(false);
+            xAxis.setDrawGridLines(false);
+            xAxis.setAvoidFirstLastClipping(true);
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+            //Values
+            ArrayList<Entry> values = new ArrayList<>();
+            ArrayList<String> xVals = new ArrayList<>();
+            Calendar c = Calendar.getInstance();
+            Integer hour;
+            int j = 2;
+            for (int i = 0; i <= 12; i++) {
+                Integer temp = hourly.getHour(j).temperature().intValue();
+                values.add(new Entry(temp, i));
+                c.add(Calendar.HOUR_OF_DAY, 2);
+                hour = c.get(Calendar.HOUR_OF_DAY);
+                xVals.add(hour.toString() + ":00");
+                j += 2;
+            }
+            Legend legend = chart.getLegend();
+            legend.setEnabled(false);
+            LineDataSet tempSet = new LineDataSet(values, "");
+            tempSet.setLineWidth(3);
+            tempSet.setColor(Color.WHITE);
+            tempSet.setDrawCircles(false);
+            tempSet.setDrawValues(true);
+            tempSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+            ArrayList<LineDataSet> dataSets = new ArrayList<>();
+            dataSets.add(tempSet);
+            LineData dataL = new LineData(xVals, dataSets);
+            dataL.setValueTextColor(Color.WHITE);
+            dataL.setValueFormatter(new Graph());
+            chart.setData(dataL);
+            chart.setDescription("");
+            chart.setHighlightIndicatorEnabled(false);
+            chart.setHighlightEnabled(false);
+            chart.setDoubleTapToZoomEnabled(false);
+            chart.setGridBackgroundColor(Color.TRANSPARENT);
+            chart.fitScreen();
+            chart.invalidate();
+        }
+
+        @Override
+        public String getFormattedValue(float v) {
+            return String.format("%.0f", v);
         }
     }
 

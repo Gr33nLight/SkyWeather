@@ -24,8 +24,8 @@ public class DataFragment extends android.support.v4.app.Fragment {
     private String[] data = MainActivity.getData();
     private TextView day1, day2, day3, daySum, dayPrec;
     private ImageView icon, icnDay1, icnDay2, icnDay3, daySpec1, daySpec2, daySpec3;
-    private static RelativeLayout day1Layout, day2Layout, day3Layout, myLayout, box;
-    private static LinearLayout weekDays, stats;
+    private RelativeLayout day1Layout, day2Layout, day3Layout, myLayout, box;
+    private LinearLayout weekDays, stats;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,8 +35,10 @@ public class DataFragment extends android.support.v4.app.Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         box = (RelativeLayout) view.findViewById(R.id.daySpecs);
+        Log.d("ONVIEWCREATED","DataFragment");
         myLayout = (RelativeLayout) view.findViewById(R.id.my_layout);
         weekDays = (LinearLayout) view.findViewById(R.id.weekDays);
+        setViews(view);
         stats = (LinearLayout) view.findViewById(R.id.Stats);
         day1Layout = (RelativeLayout) view.findViewById(R.id.day1Layout);
         day2Layout = (RelativeLayout) view.findViewById(R.id.day2Layout);
@@ -47,8 +49,6 @@ public class DataFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 if (box != null) {
-                    if (day1Layout.isShown() && day2Layout.isShown() && day3Layout.isShown() && !box.isShown())
-                        MainActivity.jumpToPage(1);
                     box.setVisibility(View.GONE);
                     day1Layout.setVisibility(View.VISIBLE);
                     day3Layout.setVisibility(View.VISIBLE);
@@ -114,7 +114,6 @@ public class DataFragment extends android.support.v4.app.Fragment {
                 day2Layout.setVisibility(View.VISIBLE);
             }
         });
-        setViews(view);
     }
 
     public void setViews(View view) {
@@ -122,9 +121,21 @@ public class DataFragment extends android.support.v4.app.Fragment {
         TextView temp, tempMax, tempMin, day1Max, day1Min, day2Max, day2Min, day3Max, day3Min;
         ImageButton goToMaps, settings;
         temp = (TextView) view.findViewById(R.id.tempvalue);
+        temp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.jumpToPage(1);
+            }
+        });
         tempMax = (TextView) view.findViewById(R.id.max);
         tempMin = (TextView) view.findViewById(R.id.min);
         icon = (ImageView) view.findViewById(R.id.icon);
+        icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.jumpToPage(1);
+            }
+        });
         icnDay1 = (ImageView) view.findViewById(R.id.icnDay1);
         icnDay2 = (ImageView) view.findViewById(R.id.icnDay2);
         icnDay3 = (ImageView) view.findViewById(R.id.icnDay3);
@@ -478,7 +489,7 @@ public class DataFragment extends android.support.v4.app.Fragment {
         super.onLowMemory();
     }
 
-    public static void setBackground() {
+    public void setBackground() {
         int backSera = Color.parseColor("#2c3e50");
         int foreSera = Color.parseColor("#263238");
         int daySpecSera = Color.parseColor("#FF111F25");

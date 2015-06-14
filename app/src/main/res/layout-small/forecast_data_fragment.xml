@@ -532,7 +532,6 @@
         android:layout_height="30dp"
         android:id="@+id/settings"
         android:background="@drawable/ic_settings"
-        android:padding="10dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
