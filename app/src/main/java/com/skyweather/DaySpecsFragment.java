@@ -33,41 +33,26 @@ import java.util.Calendar;
 
 
 public class DaySpecsFragment extends Fragment {
-    private RelativeLayout container;
+    private RelativeLayout containerR;
     private String[] data;
     private LineChart chart;
+    private double[] coords;
+    private TextView timeH1, timeH2, timeH3, timeH4, wind, humidity, precip, summary, pressure;
+    ;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.dayspecs, container, false);
-        return rootView;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        data = getArguments().getStringArray("data");
+        coords = getArguments().getDoubleArray("coords");
+
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dayspecs, container, false);
         chart = (LineChart) view.findViewById(R.id.chart);
-        chart.setNoDataText("Loading data...");
-        Log.d("ONVIEWCREATED", "DaySpecsFragment");
-        data = MainActivity.getData();
-        new Graph().execute();
-        ImageButton back = (ImageButton) view.findViewById(R.id.back);
-        TextView timeH1, timeH2, timeH3, timeH4;
-        container = (RelativeLayout) view.findViewById(R.id.container);
-        //MMRequest object ADS
-        try {
-            MMAdView adViewFromXml;
-            MMRequest request = new MMRequest();
-            adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
-            adViewFromXml.setMMRequest(request);
-            adViewFromXml.getAd();
-        }catch (Exception e ){}
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.jumpToPage(0);
-            }
-        });
-        TextView wind, humidity, precip, summary, pressure;
+        containerR = (RelativeLayout) view.findViewById(R.id.container);
         wind = (TextView) view.findViewById(R.id.windText);
         humidity = (TextView) view.findViewById(R.id.humidityText);
         precip = (TextView) view.findViewById(R.id.precipText);
@@ -77,6 +62,31 @@ public class DaySpecsFragment extends Fragment {
         timeH2 = (TextView) view.findViewById(R.id.timeH2);
         timeH3 = (TextView) view.findViewById(R.id.timeH3);
         timeH4 = (TextView) view.findViewById(R.id.timeH4);
+        setIcons(view);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        chart.setNoDataText("Loading data...");
+        Log.d("ONVIEWCREATED", "DaySpecsFragment");
+        new Graph().execute();
+        ImageButton back = (ImageButton) view.findViewById(R.id.back);
+        //MMRequest object ADS
+        try {
+            MMAdView adViewFromXml;
+            MMRequest request = new MMRequest();
+            adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
+            adViewFromXml.setMMRequest(request);
+            adViewFromXml.getAd();
+        } catch (Exception e) {
+        }
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).jumpToPage(0);
+            }
+        });
         wind.setText(data[5]);
         humidity.setText(data[3]);
         precip.setText(data[16]);
@@ -86,34 +96,34 @@ public class DaySpecsFragment extends Fragment {
         timeH2.setText(data[34]);
         timeH3.setText(data[35]);
         timeH4.setText(data[36]);
-        setIcons(view);
     }
 
-    class Graph extends AsyncTask<Void, Void, FIOHourly> implements ValueFormatter {
-        double[] coords;
+    class Graph extends AsyncTask<Void, Void, ArrayList<Entry>> implements ValueFormatter {
 
         @Override
-        protected void onPreExecute() {
-            coords = MainActivity.getCoords();
-        }
-
-        @Override
-        protected FIOHourly doInBackground(Void... params) {
+        protected ArrayList<Entry> doInBackground(Void... params) {
             try {
                 ForecastIO fio = new ForecastIO("df2fd8be38bc1a254b610d11f1d65884");
                 fio.setUnits(ForecastIO.UNITS_SI);             //sets the units as SI - optional
                 fio.setExcludeURL("minutely");
                 fio.setExtend(true);
                 fio.getForecast("" + coords[0], "" + coords[1]);
-                return new FIOHourly(fio);
+                FIOHourly hourly = new FIOHourly(fio);
+                int j = 2;
+                ArrayList<Entry> values = new ArrayList<>();
+                for (int i = 0; i <= 12; i++) {
+                    Integer temp = hourly.getHour(j).temperature().intValue();
+                    values.add(new Entry(temp, i));
+                    j += 2;
+                }
+                return values;
             } catch (Exception e) {
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(FIOHourly hourly) {
-            //setting LineChart
+        protected void onPostExecute(ArrayList<Entry> values) {
             //Y Axis
             YAxis leftAxis = chart.getAxisLeft();
             YAxis rightAxis = chart.getAxisRight();
@@ -129,18 +139,13 @@ public class DaySpecsFragment extends Fragment {
             xAxis.setAvoidFirstLastClipping(true);
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
             //Values
-            ArrayList<Entry> values = new ArrayList<>();
-            ArrayList<String> xVals = new ArrayList<>();
             Calendar c = Calendar.getInstance();
             Integer hour;
-            int j = 2;
+            ArrayList<String> xVals = new ArrayList<>();
+            hour = c.get(Calendar.HOUR_OF_DAY);
             for (int i = 0; i <= 12; i++) {
-                Integer temp = hourly.getHour(j).temperature().intValue();
-                values.add(new Entry(temp, i));
-                c.add(Calendar.HOUR_OF_DAY, 2);
-                hour = c.get(Calendar.HOUR_OF_DAY);
                 xVals.add(hour.toString() + ":00");
-                j += 2;
+                c.add(Calendar.HOUR_OF_DAY, 2);
             }
             Legend legend = chart.getLegend();
             legend.setEnabled(false);
@@ -177,15 +182,15 @@ public class DaySpecsFragment extends Fragment {
         if (hour >= 19 && hour <= 24 || hour >= 0 && hour < 4) {
             //sera-notte
 //            chartColor=Color.parseColor("#2c3e50");
-            container.setBackgroundColor(Color.parseColor("#263238"));
+            containerR.setBackgroundColor(Color.parseColor("#263238"));
         } else if (hour >= 4 && hour < 12) {
             //mattina
 //            chartColor=Color.parseColor("#3498db");
-            container.setBackgroundColor(Color.parseColor("#2980b9"));
+            containerR.setBackgroundColor(Color.parseColor("#2980b9"));
         } else if (hour >= 12 && hour < 19) {
             //pomeriggio
 //            chartColor=Color.parseColor("#F9A825");
-            container.setBackgroundColor(Color.parseColor("#F57F17"));
+            containerR.setBackgroundColor(Color.parseColor("#F57F17"));
         }
     }
 
@@ -334,8 +339,6 @@ public class DaySpecsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        Log.d("onResume","Resuming");
-        //Add method to change background here, pass parameters via method call
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean isSetToTrue = prefs.getBoolean("checkbox", true);
         String theme = prefs.getString("list", "1");
@@ -343,12 +346,13 @@ public class DaySpecsFragment extends Fragment {
             setBackground();
         } else {
             Log.d("Preferences", theme);
-            if ("2".equals(theme)) container.setBackgroundColor(Color.parseColor("#2980b9"));
-            else if ("3".equals(theme)) container.setBackgroundColor(Color.parseColor("#F57F17"));
-            else if ("4".equals(theme)) container.setBackgroundColor(Color.parseColor("#263238"));
+            if ("2".equals(theme)) containerR.setBackgroundColor(Color.parseColor("#2980b9"));
+            else if ("3".equals(theme)) containerR.setBackgroundColor(Color.parseColor("#F57F17"));
+            else if ("4".equals(theme)) containerR.setBackgroundColor(Color.parseColor("#263238"));
             else {
-                container.setBackgroundColor(Color.parseColor("#424242"));
+                containerR.setBackgroundColor(Color.parseColor("#424242"));
             }
         }
+        //TODO Add data refresh from API
     }
 }

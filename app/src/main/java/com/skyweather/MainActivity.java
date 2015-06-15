@@ -21,21 +21,20 @@ import com.github.dvdme.ForecastIOLib.FIOCurrently;
 import com.github.dvdme.ForecastIOLib.FIODaily;
 import com.github.dvdme.ForecastIOLib.FIOHourly;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
-import com.millennialmedia.android.MMSDK;
 
 import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity {
-    private static final String tag = "FORECASTIO by gr33n";
+
     private static final int NUM_PAGES = 2;
-    public static ViewPager mPager;
-    private static String[] out;
-    private static double coordinates[] = new double[2];
+    public ViewPager mPager;
+    private String[] out;
+    private boolean paused=false;
+    private double coordinates[] = new double[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MMSDK.initialize(this);
         setContentView(R.layout.activity_main);
         new CallApi().execute();
     }
@@ -109,13 +108,13 @@ public class MainActivity extends ActionBarActivity {
                         i++;
                     }
                     String day1MorningIcn, day1AfternoonIcn, day1EveningIcn, day2MorningIcn, day2AfternoonIcnn, day2EveningIcn,
-                            day3MorningIcn, day3AfternoonIcn, day3EveningIcn, icnH1, icnH2, icnH3, icnH4, timeH1, timeH2, timeH3, timeH4,timeNow;
+                            day3MorningIcn, day3AfternoonIcn, day3EveningIcn, icnH1, icnH2, icnH3, icnH4, timeH1, timeH2, timeH3, timeH4, timeNow;
                     int mattinaH = 7, pomeriggioH = 17, seraH = 20;
                     timeH1 = hourly.getHour(8).time().substring(11, 16);
                     timeH2 = hourly.getHour(14).time().substring(11, 16);
                     timeH3 = hourly.getHour(20).time().substring(11, 16);
                     timeH4 = hourly.getHour(26).time().substring(11, 16);
-                    timeNow=hourly.getHour(2).time().substring(11,16);
+                    timeNow = hourly.getHour(2).time().substring(11, 16);
                     icnH1 = hourly.getHour(8).icon();
                     icnH2 = hourly.getHour(14).icon();
                     icnH3 = hourly.getHour(20).icon();
@@ -140,10 +139,10 @@ public class MainActivity extends ActionBarActivity {
                     Double day2PrecVal = daily.getDay(2).precipProbability() * 100;
                     String day2Prec = String.format("%.0f", day2PrecVal) + "%";
                     Double day3PrecVal = daily.getDay(3).precipProbability() * 100;
-                    String day3Prec = String.format("%.0f", day3PrecVal) + "";
+                    String day3Prec = String.format("%.0f", day3PrecVal) + "%";
                     return new String[]{temp, tmax, tmin, humidity, pressure, wind, icn, day1ico, day2ico, day3ico, day1Max, day1Min, day2Max, day2Min, day3Max,
                             day3Min, precip, summray, day1MorningIcn, day1AfternoonIcn, day1EveningIcn, day2MorningIcn, day2AfternoonIcnn, day2EveningIcn, day3MorningIcn, day3AfternoonIcn,
-                            day3EveningIcn, day1Sum, day2Sum, day3Sum, day1Prec, day2Prec, day3Prec, timeH1, timeH2, timeH3, timeH4, icnH1, icnH2, icnH3, icnH4,timeNow};
+                            day3EveningIcn, day1Sum, day2Sum, day3Sum, day1Prec, day2Prec, day3Prec, timeH1, timeH2, timeH3, timeH4, icnH1, icnH2, icnH3, icnH4, timeNow};
                 }
                 return null;
             } catch (Exception e) {
@@ -153,10 +152,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(String[] output) {
-            if (output != null) {
-                out = output;
-                switchC();
+        protected void onPostExecute(String[] array) {
+            if (array != null) {
+                out = array;
+                setContentView(R.layout.screen_slider);
+                mPager = (ViewPager) findViewById(R.id.viewpager);
+                mPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
             } else if (ok) {
                 Log.d("Callapi", "Trying again!!");
                 try {
@@ -168,14 +169,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void switchC() {
-        Log.d("CALLAPI", "Switching to DataFragment view");
-        setContentView(R.layout.screen_slider);
-        mPager = (ViewPager) findViewById(R.id.viewpager);
-        mPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
-    }
-
-    public static String[] getData() {
+    protected String[] getData() {
         if (out != null) {
             return out;
         } else {
@@ -185,7 +179,12 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private boolean netCheckin() {
+    protected double[] getCoords() {
+        //requestSingleUpdate and then call this from the onResume status
+        return coordinates;
+    }
+
+    protected boolean netCheckin() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -198,7 +197,7 @@ public class MainActivity extends ActionBarActivity {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    public static void jumpToPage(int view) {
+    public void jumpToPage(int view) {
         mPager.setCurrentItem(view);
     }
 
@@ -215,20 +214,26 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+
+        private DataFragment dataFragment;
+        private DaySpecsFragment daySpecsFragment;
+
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
+            dataFragment = new DataFragment();
+            daySpecsFragment = new DaySpecsFragment();
+            Bundle extras = new Bundle();
+            extras.putStringArray("data", getData());
+            extras.putDoubleArray("coords", getCoords());
+            dataFragment.setArguments(extras);
+            daySpecsFragment.setArguments(extras);
+
         }
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new DataFragment();
-                case 1:
-                    return new DaySpecsFragment();
-                default:
-                    return new DataFragment();
-            }
+            if (position == 0) return dataFragment;
+            else return daySpecsFragment;
         }
 
         @Override
@@ -237,15 +242,19 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
-    public static double[] getCoords() {
-        //requestSingleUpdate and then call this from the onResume status
-        return coordinates;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
+        if(paused){
+            setContentView(R.layout.activity_main);
+            new CallApi().execute();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        paused=true;
     }
 
     @Override

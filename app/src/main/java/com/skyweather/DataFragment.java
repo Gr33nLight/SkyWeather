@@ -21,30 +21,73 @@ import java.util.Calendar;
 
 
 public class DataFragment extends android.support.v4.app.Fragment {
-    private String[] data = MainActivity.getData();
-    private TextView day1, day2, day3, daySum, dayPrec;
+    private String[] data;
+    private TextView day1, day2, day3, daySum, dayPrec, temp, tempMax, tempMin, day1Max, day1Min, day2Max, day2Min, day3Max, day3Min;
     private ImageView icon, icnDay1, icnDay2, icnDay3, daySpec1, daySpec2, daySpec3;
     private RelativeLayout day1Layout, day2Layout, day3Layout, myLayout, box;
     private LinearLayout weekDays, stats;
+    private ImageButton goToMaps, settings;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.forecast_data_fragment, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        data = getArguments().getStringArray("data");
+
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.forecast_data_fragment, container, false);
         box = (RelativeLayout) view.findViewById(R.id.daySpecs);
-        Log.d("ONVIEWCREATED","DataFragment");
         myLayout = (RelativeLayout) view.findViewById(R.id.my_layout);
         weekDays = (LinearLayout) view.findViewById(R.id.weekDays);
-        setViews(view);
         stats = (LinearLayout) view.findViewById(R.id.Stats);
         day1Layout = (RelativeLayout) view.findViewById(R.id.day1Layout);
         day2Layout = (RelativeLayout) view.findViewById(R.id.day2Layout);
         day3Layout = (RelativeLayout) view.findViewById(R.id.day3Layout);
         daySum = (TextView) view.findViewById(R.id.summary);
         dayPrec = (TextView) view.findViewById(R.id.dayPrec);
+        temp = (TextView) view.findViewById(R.id.tempvalue);
+        tempMax = (TextView) view.findViewById(R.id.max);
+        tempMin = (TextView) view.findViewById(R.id.min);
+        icon = (ImageView) view.findViewById(R.id.icon);
+        icnDay1 = (ImageView) view.findViewById(R.id.icnDay1);
+        icnDay2 = (ImageView) view.findViewById(R.id.icnDay2);
+        icnDay3 = (ImageView) view.findViewById(R.id.icnDay3);
+        daySpec1 = (ImageView) view.findViewById(R.id.daySpecsIcn1);
+        daySpec2 = (ImageView) view.findViewById(R.id.daySpecsIcn2);
+        daySpec3 = (ImageView) view.findViewById(R.id.daySpecsIcn3);
+        day1 = (TextView) view.findViewById(R.id.day1);
+        day2 = (TextView) view.findViewById(R.id.day2);
+        day3 = (TextView) view.findViewById(R.id.day3);
+        day1Max = (TextView) view.findViewById(R.id.day1Max);
+        day1Min = (TextView) view.findViewById(R.id.day1Min);
+        day2Max = (TextView) view.findViewById(R.id.day2Max);
+        day2Min = (TextView) view.findViewById(R.id.day2Min);
+        day3Max = (TextView) view.findViewById(R.id.day3Max);
+        day3Min = (TextView) view.findViewById(R.id.day3Min);
+        settings = (ImageButton) view.findViewById(R.id.settings);
+        goToMaps = (ImageButton) view.findViewById(R.id.goToSpecs);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+
+        setIcons();
+        setWeekDays();
+
+        temp.setText(data[0]);
+        tempMax.setText(data[1]);
+        tempMin.setText(data[2]);
+        day1Max.setText(data[10]);
+        day1Min.setText(data[11]);
+        day2Max.setText(data[12]);
+        day2Min.setText(data[13]);
+        day3Max.setText(data[14]);
+        day3Min.setText(data[15]);
+
         myLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,55 +157,19 @@ public class DataFragment extends android.support.v4.app.Fragment {
                 day2Layout.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    public void setViews(View view) {
-        data = MainActivity.getData();
-        TextView temp, tempMax, tempMin, day1Max, day1Min, day2Max, day2Min, day3Max, day3Min;
-        ImageButton goToMaps, settings;
-        temp = (TextView) view.findViewById(R.id.tempvalue);
         temp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.jumpToPage(1);
+                ((MainActivity) getActivity()).jumpToPage(1);
             }
         });
-        tempMax = (TextView) view.findViewById(R.id.max);
-        tempMin = (TextView) view.findViewById(R.id.min);
-        icon = (ImageView) view.findViewById(R.id.icon);
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.jumpToPage(1);
+                ((MainActivity) getActivity()).jumpToPage(1);
             }
         });
-        icnDay1 = (ImageView) view.findViewById(R.id.icnDay1);
-        icnDay2 = (ImageView) view.findViewById(R.id.icnDay2);
-        icnDay3 = (ImageView) view.findViewById(R.id.icnDay3);
-        daySpec1 = (ImageView) view.findViewById(R.id.daySpecsIcn1);
-        daySpec2 = (ImageView) view.findViewById(R.id.daySpecsIcn2);
-        daySpec3 = (ImageView) view.findViewById(R.id.daySpecsIcn3);
-        day1 = (TextView) view.findViewById(R.id.day1);
-        day2 = (TextView) view.findViewById(R.id.day2);
-        day3 = (TextView) view.findViewById(R.id.day3);
-        day1Max = (TextView) view.findViewById(R.id.day1Max);
-        day1Min = (TextView) view.findViewById(R.id.day1Min);
-        day2Max = (TextView) view.findViewById(R.id.day2Max);
-        day2Min = (TextView) view.findViewById(R.id.day2Min);
-        day3Max = (TextView) view.findViewById(R.id.day3Max);
-        day3Min = (TextView) view.findViewById(R.id.day3Min);
-        temp.setText(data[0]);
-        tempMax.setText(data[1]);
-        tempMin.setText(data[2]);
-        day1Max.setText(data[10]);
-        day1Min.setText(data[11]);
-        day2Max.setText(data[12]);
-        day2Min.setText(data[13]);
-        day3Max.setText(data[14]);
-        day3Min.setText(data[15]);
-        setIcons();
-        setWeekDays();
-        settings = (ImageButton) getActivity().findViewById(R.id.settings);
+
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,11 +177,10 @@ public class DataFragment extends android.support.v4.app.Fragment {
                 startActivity(i);
             }
         });
-        goToMaps = (ImageButton) getActivity().findViewById(R.id.goToSpecs);
         goToMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.jumpToPage(1);
+                ((MainActivity) getActivity()).jumpToPage(1);
             }
         });
     }
@@ -583,6 +589,7 @@ public class DataFragment extends android.support.v4.app.Fragment {
                 box.setBackgroundColor(Color.parseColor("#ff141414"));
             }
         }
+        //TODO Add data refresh from API
     }
 
 }
