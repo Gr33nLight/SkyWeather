@@ -25,8 +25,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ValueFormatter;
-import com.millennialmedia.android.MMAdView;
-import com.millennialmedia.android.MMRequest;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +43,7 @@ public class DaySpecsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         data = getArguments().getStringArray("data");
         coords = getArguments().getDoubleArray("coords");
 
@@ -51,6 +52,9 @@ public class DaySpecsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dayspecs, container, false);
+        AdView mAdView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         chart = (LineChart) view.findViewById(R.id.chart);
         containerR = (RelativeLayout) view.findViewById(R.id.container);
         wind = (TextView) view.findViewById(R.id.windText);
@@ -73,14 +77,6 @@ public class DaySpecsFragment extends Fragment {
         new Graph().execute();
         ImageButton back = (ImageButton) view.findViewById(R.id.back);
         //MMRequest object ADS
-        try {
-            MMAdView adViewFromXml;
-            MMRequest request = new MMRequest();
-            adViewFromXml = (MMAdView) view.findViewById(R.id.adView);
-            adViewFromXml.setMMRequest(request);
-            adViewFromXml.getAd();
-        } catch (Exception e) {
-        }
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

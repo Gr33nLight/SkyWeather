@@ -1,79 +1,69 @@
 package com.skyweather;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.github.dvdme.ForecastIOLib.FIOCurrently;
 import com.github.dvdme.ForecastIOLib.FIODaily;
 import com.github.dvdme.ForecastIOLib.FIOHourly;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    private static final int NUM_PAGES = 2;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 10;
+    private static final String TAG = "Gr33nDebug";
     public ViewPager mPager;
     private String[] out;
-    private boolean paused=false;
-    private double coordinates[] = new double[2];
+    private GoogleApiClient mGoogleApiClient;
+    protected Boolean mRequestingLocationUpdates = true;
+    protected LocationRequest mLocationRequest;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    protected Location mCurrentLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CallApi().execute();
+        buildGoogleApiClient();
     }
 
     private class CallApi extends AsyncTask<Void, Void, String[]> {
-        private boolean ok = false;
-
-        @Override
-        protected void onPreExecute() {
-            GPSTracker gps = new GPSTracker(MainActivity.this);
-            Log.d("callapi", "NetCeck: " + netCheckin());
-            Log.d("callapi", "CanGetLocation: " + gps.canGetLocation());
-            if (gps.canGetLocation() && netCheckin()) {
-                ok = true;
-                coordinates[0] = gps.getLatitude();
-                coordinates[1] = gps.getLongitude();
-            } else {
-                ok = false;
-                finish();
-                Log.d("callapi", "isGpsOn: " + isGpsOn(getBaseContext()));
-                if (!netCheckin() && isGpsOn(getBaseContext()))
-                    Toast.makeText(getBaseContext(), "Please enable Network connectivity", Toast.LENGTH_SHORT).show();
-                else if (!isGpsOn(getBaseContext()) && netCheckin())
-                    Toast.makeText(getBaseContext(), "Please enable GPS", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getBaseContext(), "Please enable Connectivity", Toast.LENGTH_SHORT).show();
-            }
-        }
 
         @Override
         protected String[] doInBackground(Void... params) {
             try {
-                Log.d("callapi", "Coords: " + coordinates[0] + "," + coordinates[1]);
-                if (coordinates[0] != 0 && coordinates[1] != 0) {
+                if (mCurrentLocation != null) {
                     ForecastIO fio = new ForecastIO("df2fd8be38bc1a254b610d11f1d65884"); //instantiate the class with the API key.
                     fio.setUnits(ForecastIO.UNITS_SI);             //sets the units as SI - optional
                     fio.setExcludeURL("minutely");
                     fio.setExtend(true);
-                    fio.getForecast("" + coordinates[0], "" + coordinates[1]);
+                    fio.getForecast("" + mCurrentLocation.getLatitude(), "" + mCurrentLocation.getLongitude());
                     FIOCurrently currently = new FIOCurrently(fio);
                     FIODaily daily = new FIODaily(fio);
                     FIOHourly hourly = new FIOHourly(fio);
@@ -157,16 +147,21 @@ public class MainActivity extends ActionBarActivity {
                 out = array;
                 setContentView(R.layout.screen_slider);
                 mPager = (ViewPager) findViewById(R.id.viewpager);
-                mPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
-            } else if (ok) {
-                Log.d("Callapi", "Trying again!!");
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
-                new CallApi().execute();
+                mPager.setOffscreenPageLimit(2);
+                setupViewPager(mPager);
+            } else {
+                Log.e(TAG, "Error retrieving data");
             }
         }
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+//        DaySpecsFragment daySpecs = new DaySpecsFragment();
+        DataFragment dataF = new DataFragment();
+//        adapter.addFragment(daySpecs, "");
+        adapter.addFragment(dataF, "");
+        viewPager.setAdapter(adapter);
     }
 
     protected String[] getData() {
@@ -177,24 +172,6 @@ public class MainActivity extends ActionBarActivity {
                     , "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA", "NA"};
             //30 params
         }
-    }
-
-    protected double[] getCoords() {
-        //requestSingleUpdate and then call this from the onResume status
-        return coordinates;
-    }
-
-    protected boolean netCheckin() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    private boolean isGpsOn(Context mContext) {
-        LocationManager locationManager = (LocationManager)
-                mContext.getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     public void jumpToPage(int view) {
@@ -213,58 +190,33 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        private DataFragment dataFragment;
-        private DaySpecsFragment daySpecsFragment;
-
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-            dataFragment = new DataFragment();
-            daySpecsFragment = new DaySpecsFragment();
-            Bundle extras = new Bundle();
-            extras.putStringArray("data", getData());
-            extras.putDoubleArray("coords", getCoords());
-            dataFragment.setArguments(extras);
-            daySpecsFragment.setArguments(extras);
-
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
         }
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) return dataFragment;
-            else return daySpecsFragment;
+            return mFragmentList.get(position);
         }
 
         @Override
         public int getCount() {
-            return NUM_PAGES;
+            return mFragmentList.size();
         }
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(paused){
-            setContentView(R.layout.activity_main);
-            new CallApi().execute();
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
         }
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        paused=true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 
     @Override
@@ -289,5 +241,130 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+        createLocationRequest();
+    }
+
+    //Creates the location request to be performed by calling startLocationUpdates()
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        // Sets the fastest rate for active location updates. This interval is exact, and your
+        // application will never receive updates faster than this value.
+        mLocationRequest.setFastestInterval(UPDATE_INTERVAL_IN_MILLISECONDS / 2);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+        if (mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+        Log.e(TAG, "Connected to PlayServices");
+
+        //Retrieving nearby places list based on current location
+        if (ActivityCompat.checkSelfPermission(getBaseContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+        } else {
+            Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null) {
+                mCurrentLocation = mLastLocation;
+            }
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+        stopLocationUpdates();
+        new CallApi().execute();
+    }
+
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i(TAG, "Connection failed");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null)
+            mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected())
+            mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new CallApi().execute();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            stopLocationUpdates();
+        }
+    }
+
+    protected void startLocationUpdates() {
+
+        if (ActivityCompat.checkSelfPermission(getBaseContext().getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getBaseContext().getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+        } else {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+    }
+
+    public boolean isNetworkAvailable(final Context context) {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
 
 }
